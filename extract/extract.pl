@@ -199,22 +199,45 @@ sub filter_ctrl_char {
         foreach my $ref ( @{$ref_layer_cr} ) {
 			# if no send, we just ignore it
             if ( !defined $ref->{send} ) {
+				$str_expect .= $ref->{expect};
 				next;
             }
 
 			# process backspace
-			if ($ref->{send} =~ /\c?/) {
+			if ($ref->{send} =~ /\c?$/) {
+				$ref->{send} =~ s/\c?$//g;
+				$str_send .= $ref->{send};
+
 				if ($ref->{expect} =~ /\cH\c[\\\[K/) {
-					print "OK, it's a backspace\n";
+					$str_send = substr($str_send, 0, length($str_send) - 1);
+					# Yes, we should delete one letter
+					$ref->{expect} =~ s/\cH\c[\\\[K//g;
+					$str_expect .= $ref->{expect};
 				}
+				elsif ($ref->{expect} =~ /\cG$/) {
+					# no letters to delelte
+					$ref->{expect} =~ s/\cG$//g;
+					$str_expect .= $ref->{expect};
+				}
+				else {
+					$str_send .= $ref->{send};
+					$str_expect .= $ref->{expect};
+				}
+			}
+			else {
+				$str_send .= $ref->{send};
+				$str_expect .= $ref->{expect};
 			}
 
         }
+
 		$href_pair{send} = $str_send;
 		$href_pair{expect} = $str_expect;
-		my %hre
-		push @layer_ctrl_char, 
+		my %href_data = %href_pair;
+		push @layer_ctrl_char, \%href_data;
     }
+
+	return \@layer_ctrl_char;
 }
 
 # ===========================================================================
@@ -253,6 +276,7 @@ my $layer_snd_exp = filter_send_expect( \@layer_raw_data );
 
 #print Dumper($layer_snd_exp);
 my $layer_cr = filter_carriage_return($layer_snd_exp);
-#print Dumper($layer_cr);
+print Dumper($layer_cr);
 my $layer_ctrl_char = filter_ctrl_char($layer_cr);
+print Dumper($layer_ctrl_char);
 
