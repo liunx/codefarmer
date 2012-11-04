@@ -88,6 +88,9 @@ sub filter_send_expect {
                         $element{expect} = $data[1];
                         my %href = %element;
                         push @expects, \%href;
+						
+						# NOTE do not forget to clean the tmple variables
+						%element = ();
                     }
                     else {
                         die "split failed!\n";
@@ -106,6 +109,12 @@ sub filter_send_expect {
                 }
 
             }
+            elsif ( $line =~ /^expect eof/ ) {
+				# the end of file
+				my %href = %element;
+				push @expects, \%href;
+				%element = ();
+			}
         }
         else {
             if ( $line =~ /"$/ ) {
@@ -120,6 +129,7 @@ sub filter_send_expect {
                     $element{expect} = $mult_line;
                     my %href = %element;
                     push @expects, \%href;
+					%element = ();
                 }
                 else {
                     die "Error: no element key defined!\n";
@@ -263,6 +273,9 @@ sub show_data {
 # ===========================================================================
 open FILE, "script.exp" or die $!;
 
+# debug.log for debug only
+open DEBUG, "> debug.log" or die $!;
+
 # ============= raw data layer ===============
 my @layer_raw_data = ();
 while (<FILE>) {
@@ -274,9 +287,11 @@ close FILE;
 # ========== send/expect pair layer ==========
 my $layer_snd_exp = filter_send_expect( \@layer_raw_data );
 
-#print Dumper($layer_snd_exp);
-my $layer_cr = filter_carriage_return($layer_snd_exp);
-print Dumper($layer_cr);
-my $layer_ctrl_char = filter_ctrl_char($layer_cr);
-print Dumper($layer_ctrl_char);
+print DEBUG Dumper($layer_snd_exp);
 
+my $layer_cr = filter_carriage_return($layer_snd_exp);
+print DEBUG Dumper($layer_cr);
+my $layer_ctrl_char = filter_ctrl_char($layer_cr);
+print DEBUG Dumper($layer_ctrl_char);
+
+close DEBUG;
