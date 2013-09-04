@@ -1,0 +1,17 @@
+<?xml version='1.0'?>
+<worklist>
+  <work>
+    <type>spawn</type>
+    <command>bash</command>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>~/Work/Perl/Work/codefarmer\$ $</pattern>
+    <answer>echo "Yes"\n</answer>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>~/Work/Perl/Work/codefarmer\$ $</pattern>
+    <answer>exit\n</answer>
+  </work>
+</worklist>

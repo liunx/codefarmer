@@ -1,0 +1,67 @@
+<?xml version='1.0'?>
+<worklist>
+  <work>
+    <type>spawn</type>
+    <command>bash</command>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>\$ $</pattern>
+    <answer>cd ~/Work/OpenWrt/work/xauth_psk/\n</answer>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>~/Work/OpenWrt/work/xauth_psk\$ $</pattern>
+    <answer>echo OK\n</answer>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>OK</pattern>
+    <answer>scp client/init.d/racoon root@10.129.228.202:/etc/init.d/\n</answer>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>password: $</pattern>
+    <answer>123456\n</answer>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>100%</pattern>
+    <answer>echo "OK"\n</answer>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>OK</pattern>
+    <answer>scp client/racoon.conf client/setkey.conf root@10.129.228.202:/etc/\n</answer>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>password: $</pattern>
+    <answer>123456\n</answer>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>100%</pattern>
+    <answer>echo "OK"\n</answer>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>OK</pattern>
+    <answer>scp client/racoon/psk.txt root@10.129.228.202:/etc/racoon/\n</answer>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>password: $</pattern>
+    <answer>123456\n</answer>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>100%</pattern>
+    <answer>echo "OK"\n</answer>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>\$ $</pattern>
+    <answer>exit\n</answer>
+  </work>
+</worklist>
