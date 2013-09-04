@@ -25,13 +25,11 @@ use utf8;
 use Expect;
 use XML::Simple;
 use Data::Dumper;
+use Getopt::Std;
 
 my $timeout = 2;
 my $flags_timeout = 0;
 my $flags_eof = 0;
-
-my $simple = XML::Simple->new();
-my $data   = $simple->XMLin('telnet.xml');
 
 ## subroutines
 # we must care for the failure
@@ -59,6 +57,17 @@ sub expect_timeout {
 }
 
 ############# main ############
+my %options = ();
+Getopt::Std::getopts('i:', \%options);
+
+if (!defined $options{i}) {
+	print "Usage: auto_work.pl -i xml...\n";
+	exit 0;
+}
+
+my $simple = XML::Simple->new();
+my $data   = $simple->XMLin($options{i});
+
 my $exp = Expect->new();
 $exp->raw_pty(0);
 
