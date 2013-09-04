@@ -70,6 +70,7 @@ my $data   = $simple->XMLin($options{i});
 
 my $exp = Expect->new();
 $exp->raw_pty(0);
+$exp->debug(0);
 
 foreach my $item (@{$data->{work}}) {
 	# fetch work pipe line
@@ -79,7 +80,7 @@ foreach my $item (@{$data->{work}}) {
 	elsif ($item->{type} eq "expect") {
 		$exp->expect(
 			$timeout, 
-			[ qr($item->{pattern}), \&expect_handler, $item ],
+			[ "-re", qr($item->{pattern}), \&expect_handler, $item ],
 			[ eof => \&expect_eof ],
 			[ timeout => \&expect_timeout ]
 		);
