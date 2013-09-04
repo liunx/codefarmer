@@ -1,0 +1,43 @@
+<?xml version='1.0'?>
+<worklist>
+  <work>
+    <type>spawn</type>
+    <command>telnet 192.168.1.1</command>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>[Ll]ogin: $</pattern>
+    <answer>telecomadmin\n</answer>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>[Pp]assword: $</pattern>
+    <answer>admin\n</answer>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>[>] $</pattern>
+    <answer>sh\n</answer>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>~ # </pattern>
+    <answer>cd /tmp\n</answer>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>/tmp # $</pattern>
+    <answer>echo "hello,world"\n</answer>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>hello,world</pattern>
+    <answer>\c]</answer>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>telnet></pattern>
+    <answer>quit\n</answer>
+  </work>
+</worklist>
+
