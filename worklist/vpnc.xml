@@ -1,0 +1,67 @@
+<?xml version='1.0'?>
+<worklist>
+  <work>
+    <type>spawn</type>
+    <command>ssh liunx@10.129.228.200</command>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>password: $</pattern>
+    <answer>123456\n</answer>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>liunx@ubuntu:~\$ $</pattern>
+    <answer>echo OK\n</answer>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>OK</pattern>
+    <answer>sudo vpnc\n</answer>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>\[sudo\] password</pattern>
+    <answer>123456\n</answer>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>Enter IPSec gateway address:</pattern>
+    <answer>10.129.228.201\n</answer>
+    <sleep>1</sleep>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>Enter IPSec ID for </pattern>
+    <answer>ipsec\n</answer>
+    <sleep>1</sleep>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>Enter IPSec secret for </pattern>
+    <answer>ipsec\n</answer>
+    <sleep>1</sleep>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>Enter username for </pattern>
+    <answer>test\n</answer>
+    <sleep>1</sleep>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>Enter password for </pattern>
+    <answer>test\n</answer>
+    <sleep>1</sleep>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>liunx@ubuntu:~\$ $</pattern>
+    <answer>echo OK\n</answer>
+  </work>
+  <work>
+    <type>expect</type>
+    <pattern>OK</pattern>
+    <answer>exit\n</answer>
+  </work>
+</worklist>
