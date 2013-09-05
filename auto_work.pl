@@ -27,7 +27,7 @@ use XML::Simple;
 use Data::Dumper;
 use Getopt::Std;
 
-my $timeout = 2;
+my $timeout = 20;
 my $flags_timeout = 0;
 my $flags_eof = 0;
 
@@ -84,10 +84,17 @@ foreach my $item (@{$data->{work}}) {
 			[ eof => \&expect_eof ],
 			[ timeout => \&expect_timeout ]
 		);
+
+		# we need to sleep a bit to avoid a faster reponse than
+		# the target program, or we'll stuck.
+		if (defined $item->{sleep}) {
+			sleep($item->{sleep});
+		}
 	}
 	else {
 		print "Unknown type!\n";
 	}
+
 }
 
 $exp->interact();
