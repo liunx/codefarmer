@@ -31,6 +31,9 @@ my $timeout = 20;
 my $flags_timeout = 0;
 my $flags_eof = 0;
 
+# hash the workblocks
+my %workblocks = ();
+
 #################### main #####################
 my %options = ();
 Getopt::Std::getopts('i:', \%options);
@@ -41,13 +44,21 @@ if (!defined $options{i}) {
 }
 
 my $simple = XML::Simple->new();
-my $data   = $simple->XMLin($options{i});
+my $data   = $simple->XMLin($options{i}, KeyAttr => { function => 'name' }, ForceArray => [ 'workblock', 'work' ]);
 
 my $exp = Expect->new();
 $exp->raw_pty(0);
 $exp->debug(0);
 
-main_loop($data);
+hash_workblocks($data->{workblock});
+
+# we should get the main entry, first, then begin
+# the work from main.
+if (!defined $workblocks{main}) {
+	die "No main block found!";
+}
+my $main = $workblocks{main};
+main_loop($main);
 
 $exp->interact();
 
@@ -78,6 +89,19 @@ sub expect_timeout {
 	die "ERROR: TIMEOUT!\n";
 }
 
+sub hash_workblocks {
+	my $wblocks = shift;
+	if (ref($wblocks) ne "ARRAY") {
+		die "No workblocks found!";
+	}
+
+	foreach my $i (@{$wblocks}) {
+		$workblocks{$i->{name}} = $i;
+	}
+
+	print "hash workblocks complete...\n";
+}
+
 sub main_loop {
 	my $data = shift;
 
@@ -99,6 +123,10 @@ sub main_loop {
 			if (defined $item->{sleep}) {
 				sleep($item->{sleep});
 			}
+		}
+		elsif ($item->{type} eq "callblock") {
+			my $item = $workblocks{$item->{name}};
+			main_loop($item);
 		}
 		else {
 			print "Unknown type!\n";
