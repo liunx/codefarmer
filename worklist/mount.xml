@@ -1,0 +1,13 @@
+<?xml version='1.0'?>
+<worklist>
+  <workblock name="main">
+    <work type="spawn">
+      <command>sudo mount 192.168.2.69:/home/lliu/Work ~/Work/Broadcom/Broadcom</command>
+    </work>
+    <work>
+      <type>expect</type>
+      <pattern>\[sudo\] password</pattern>
+      <answer>liunx@newrocktech\n</answer>
+    </work>
+  </workblock>
+</worklist>

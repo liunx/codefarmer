@@ -33,25 +33,25 @@
   <work>
     <type>expect</type>
     <pattern>Enter IPSec ID for </pattern>
-    <answer>ipsec\n</answer>
+    <answer>test\n</answer>
     <sleep>1</sleep>
   </work>
   <work>
     <type>expect</type>
     <pattern>Enter IPSec secret for </pattern>
-    <answer>ipsec\n</answer>
+    <answer>test\n</answer>
     <sleep>1</sleep>
   </work>
   <work>
     <type>expect</type>
     <pattern>Enter username for </pattern>
-    <answer>test\n</answer>
+    <answer>root\n</answer>
     <sleep>1</sleep>
   </work>
   <work>
     <type>expect</type>
     <pattern>Enter password for </pattern>
-    <answer>test\n</answer>
+    <answer>123456\n</answer>
     <sleep>1</sleep>
   </work>
   <work>

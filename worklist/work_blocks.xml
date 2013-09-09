@@ -1,0 +1,39 @@
+<?xml version='1.0'?>
+<worklist>
+  <workblock name="ssh_spawn">
+    <work type="spawn">
+      <command>ssh liunx@10.129.228.200</command>
+    </work>
+  </workblock>
+  <workblock name="login">
+    <work type="expect">
+      <pattern>password: $</pattern>
+      <answer>123456\n</answer>
+    </work>
+    <work type="expect">
+      <pattern>liunx@ubuntu:~\$ $</pattern>
+      <answer>echo OK\n</answer>
+    </work>
+    <work type="expect">
+      <pattern>liunx@ubuntu:~\$ $</pattern>
+      <answer>echo Hello,world\n</answer>
+    </work>
+    <work type="callblock">
+      <name>exit</name>
+    </work>
+  </workblock>
+  <workblock name="exit">
+    <work type="expect">
+      <pattern>liunx@ubuntu:~\$ $</pattern>
+      <answer>exit\n</answer>
+    </work>
+  </workblock>
+  <workblock name="main">
+    <work type="callblock">
+      <name>ssh_spawn</name>
+    </work>
+    <work type="callblock">
+      <name>login</name>
+    </work>
+  </workblock>
+</worklist>

@@ -47,7 +47,7 @@
   <work>
     <type>expect</type>
     <pattern>OK</pattern>
-    <answer>scp client/racoon/psk.txt root@10.129.228.202:/etc/racoon/\n</answer>
+    <answer>scp client/racoon/psk.txt client/racoon/motd root@10.129.228.202:/etc/racoon/\n</answer>
   </work>
   <work>
     <type>expect</type>
