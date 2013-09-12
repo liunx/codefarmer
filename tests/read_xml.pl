@@ -36,7 +36,7 @@ if (!defined $options{i}) {
 }
 
 my $simple = XML::Simple->new();
-my $data   = $simple->XMLin($options{i}, KeyAttr => { function => 'name' }, ForceArray => [ 'workblock', 'work' ]);
+my $data   = $simple->XMLin($options{i}, KeyAttr => { function => 'name' }, ForceArray => [ 'workblock', 'work', 'pattern' ]);
 # DEBUG
 print ref $data, "\n";
 print Dumper $data;
