@@ -1,22 +1,7 @@
 #!/usr/bin/env perl 
-#===============================================================================
 #
-#         FILE: select.pl
+# landlord -- this is the main server
 #
-#        USAGE: ./select.pl  
-#
-#  DESCRIPTION: for non-block select 
-#
-#      OPTIONS: ---
-# REQUIREMENTS: ---
-#         BUGS: ---
-#        NOTES: ---
-#       AUTHOR: YOUR NAME (), 
-# ORGANIZATION: 
-#      VERSION: 1.0
-#      CREATED: 2012年09月24日 12时03分25秒
-#     REVISION: ---
-#===============================================================================
 
 use strict;
 use warnings;
@@ -25,9 +10,10 @@ use utf8;
 use Data::Dumper;
 use IO::Select;
 use IO::Socket;
-use Time::HiRes qw(usleep);
+use Time::HiRes qw(usleep gettimeofday);
+use Digest::MD5 qw(md5_hex);
 use Fcntl;
-use POSIX qw(:errno_h);
+use POSIX qw(:errno_h :sys_wait_h);
 
 # define the constant scala
 use constant TIMEOUT => (2 * 1000 * 1000);
@@ -35,16 +21,28 @@ use constant TIMEOUT => (2 * 1000 * 1000);
 # it's better to read data at one time.
 use constant BUFLEN => (1024 * 1024);
 
+my $keep_loop = 1;
 my $lsn = IO::Socket::INET->new(Listen => 1, LocalPort => 9090) 
 	or die $!;
 my $sel = IO::Select->new($lsn);
 
-my $sleep_time = 100;
+$SIG{INT} = sub {
+	print "interrupt...\n";
+	$keep_loop = 0;
+	$lsn->close();
+};
 
-# time out 2s
-my $time_out = 0;
+$SIG{CHLD} = sub {
+	my $kid;
+	do  {
+		$kid = waitpid(-1, WNOHANG);
+	} while ($kid > 0);
+};
 
-while(1) {
+#############################################################################
+# main loop
+#############################################################################
+while($keep_loop) {
 	# -----------------------------------------------------------------------
 	# process the incoming events
 	# -----------------------------------------------------------------------
@@ -68,26 +66,52 @@ while(1) {
 
 			# 0 means no data but remote pair broken.
 			if (!defined($total_data)) {
-				print "Remote pair broken...\n";
 				$sel->remove($fh);
 				$fh->close;
 				next;
 			}
 
-			# TODO Here we can add process subroutines
-			print $total_data;
+			task_scheduler($total_data, $fh);
 
 		}
 	}
 
-	# -----------------------------------------------------------------------
-	# do the normal affair
-	# -----------------------------------------------------------------------
+}
 
-	if ($time_out > TIMEOUT) {
-		$time_out = 0;
+$lsn->close();
+
+#############################################################################
+# subroutines
+#############################################################################
+my %tasks = ();
+# we'll do 3 task:
+# 1. get use command, 2. fork farmer process, 3 send command to farmer process
+sub task_scheduler {
+	my $data = shift;
+	my $fh = shift;
+
+	print $data;
+	# add json parser
+
+	if ($data eq "hellouser\n") {
+		# we'll assign a md5 id per data/child process
+		my $id = md5_hex(gettimeofday());
+		$tasks{$id} = $data;
+
+		# now, we'll fork a child to do the work
+		my $pid = fork();
+		if ($pid) {
+			;
+		}
+		elsif (undef $pid) {
+			print "fork failed!\n";
+		}
+		else {
+			local $SIG{CHLD} = "IGNORE";
+			exec('./farmer.pl', '-h127.0.0.1', '-p9090', '-Ptcp', "-i$id");
+		}
 	}
-
-	usleep($sleep_time);
-	$time_out += $sleep_time;
+	elsif ($data eq "farmer") {
+		print "get data from farmer...\n";
+	}
 }
