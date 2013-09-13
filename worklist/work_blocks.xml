@@ -7,16 +7,47 @@
   </workblock>
   <workblock name="login">
     <work type="expect">
-      <pattern>password: $</pattern>
-      <answer>123456\n</answer>
+      <pattern>
+        <filter>password: $</filter>
+        <answer>123456\n</answer>
+        <action type="next">
+          <blockname></blockname>
+        </action>
+      </pattern>
+      <pattern>
+        <filter>Connection refused</filter>
+        <answer></answer>
+        <action type="exit"></action>
+      </pattern>
+      <pattern>
+        <filter>No route to host</filter>
+        <answer></answer>
+        <action type="exit"></action>
+      </pattern>
+      <pattern>
+        <filter>__TIME_OUT__</filter>
+        <answer></answer>
+        <action type="exit"></action>
+      </pattern>
+      <pattern>
+        <filter>__EOF__</filter>
+        <answer></answer>
+        <action type="exit"></action>
+      </pattern>
     </work>
     <work type="expect">
-      <pattern>liunx@ubuntu:~\$ $</pattern>
-      <answer>echo OK\n</answer>
+      <pattern>
+        <filter>liunx@ubuntu:~\$ $</filter>
+        <answer>echo OK\n</answer>
+        <action type="next"></action>
+      </pattern>
     </work>
     <work type="expect">
-      <pattern>liunx@ubuntu:~\$ $</pattern>
-      <answer>echo Hello,world\n</answer>
+      <pattern>
+        <filter>liunx@ubuntu:~\$ $</filter>
+        <answer>echo Hello,world\n</answer>
+        <action type="next"></action>
+      </pattern>
     </work>
     <work type="callblock">
       <name>exit</name>
@@ -24,8 +55,11 @@
   </workblock>
   <workblock name="exit">
     <work type="expect">
-      <pattern>liunx@ubuntu:~\$ $</pattern>
-      <answer>exit\n</answer>
+      <pattern>
+        <filter>liunx@ubuntu:~\$ $</filter>
+        <answer>exit\n</answer>
+        <action type="return"></action>
+      </pattern>
     </work>
   </workblock>
   <workblock name="main">

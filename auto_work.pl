@@ -44,7 +44,7 @@ if (!defined $options{i}) {
 }
 
 my $simple = XML::Simple->new();
-my $data   = $simple->XMLin($options{i}, KeyAttr => { function => 'name' }, ForceArray => [ 'workblock', 'work' ]);
+my $data   = $simple->XMLin($options{i}, KeyAttr => { function => 'name' }, ForceArray => [ 'workblock', 'work', 'pattern' ]);
 
 my $exp = Expect->new();
 $exp->raw_pty(0);
@@ -77,6 +77,9 @@ sub expect_handler {
 	$answer =~ s/\\n/\n/g;
 	$answer =~ s/\\c]/\c]/g;
 	$fh->send($answer);
+
+	# check action
+	print "action: $params->{action}->{type}\n";
 }
 
 sub expect_eof {
@@ -99,7 +102,6 @@ sub hash_workblocks {
 		$workblocks{$i->{name}} = $i;
 	}
 
-	print "hash workblocks complete...\n";
 }
 
 sub main_loop {
@@ -111,14 +113,23 @@ sub main_loop {
 			$exp->spawn($item->{command}) or die $!;
 		}
 		elsif ($item->{type} eq "expect") {
+			# add pattern array to expect
+			my @patterns = ();
+			foreach my $i (@{$item->{pattern}}) {
+				push @patterns, [ "-re", qr($i->{filter}), \&expect_handler, $i ];
+			}
+
+			push @patterns, [ eof => \&expect_eof ];
+			push @patterns, [ timeout => \&expect_timeout ];
 			$exp->expect(
 				$timeout, 
-				[ "-re", qr($item->{pattern}), \&expect_handler, $item ],
-				[ eof => \&expect_eof ],
-				[ timeout => \&expect_timeout ]
+				@patterns,
+				# [ "-re", qr($item->{pattern}), \&expect_handler, $item ],
+				# [ eof => \&expect_eof ],
+				# [ timeout => \&expect_timeout ]
 			);
 
-			# we need to sleep a bit to avoid a faster reponse than
+			# we need to sleep a bit to avoid a faster response than
 			# the target program, or we'll stuck.
 			if (defined $item->{sleep}) {
 				sleep($item->{sleep});
